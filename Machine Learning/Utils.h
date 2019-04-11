@@ -32,11 +32,13 @@ public:
 
     static void WritePredict(const std::vector<int> &predict, const std::string &resName);
 
-    static bool StartsWith(std::string mainStr, std::string toMatch);
+    static bool StartsWith(const std::string& mainStr, const std::string& toMatch);
 
     static bool StartsWithCaseInsensitive(std::string mainStr, std::string toMatch);
 
     static bool CaseInsensitiveStringCompare(std::string &str1, std::string &str2);
+
+    static std::vector<std::vector<int>> SplitDataSetIntoClasses(const std::vector<Instance> &train);
 
 private:
 

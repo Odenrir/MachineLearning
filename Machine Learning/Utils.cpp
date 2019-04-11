@@ -20,6 +20,7 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
     std::string data("@DATA");
     std::string numeric("NUMERIC");
     std::string missing("?");
+    std::string empty();
     int numericValues = 0, nominalValues = 0, id = 0;
     if (file.is_open()) {
         while (getline(file, line)) {
@@ -57,7 +58,7 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
                     }
                 }
                 nominalValues--;
-            } else if (dataReading && !StartsWithCaseInsensitive(line, description)) {
+            } else if (dataReading && !StartsWithCaseInsensitive(line, description) && !CaseInsensitiveStringCompare(line, empty)) {
                 std::vector<float> numericFeatures(numericValues);
                 std::vector<int> nominalFeatures(nominalValues);
                 int j = 0, k = 0;
@@ -99,14 +100,6 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
     std::vector<Instance> vecRes{std::make_move_iterator(std::begin(result)),
                                  std::make_move_iterator(std::end(result))};
     return vecRes;
-}
-
-void Utils::PrintInstance(Instance &inst) {
-    std::vector<float> feat = inst.GetNumericFeatures();
-    for (int i = 0; i < feat.size(); i++) {
-        std::cout << feat[i] << ", ";
-    }
-    std::cout << "\n";
 }
 
 bool Utils::CompareInstances(const std::vector<Instance> &inst1, const std::vector<Instance> &inst2) {
@@ -159,8 +152,8 @@ float Utils::Accuraccy(const std::vector<Instance> &orig, const std::vector<int>
 void Utils::WritePredict(const std::vector<int> &predict, const std::string &resName) {
     std::ofstream myfile;
     myfile.open(resName);
-    for (int i = 0; i < predict.size(); i++) {
-        myfile << predict[i] << "\n";
+    for (int x: predict) {
+        myfile << x << "\n";
     }
 
     myfile.close();
@@ -170,13 +163,9 @@ void Utils::WritePredict(const std::vector<int> &predict, const std::string &res
  * Case Sensitive Implementation of startsWith()
  * It checks if the string 'mainStr' starts with given string 'toMatch'
  */
-bool Utils::StartsWith(std::string mainStr, std::string toMatch) {
+bool Utils::StartsWith(const std::string& mainStr, const std::string& toMatch) {
     // std::string::find returns 0 if toMatch is found at starting
-
-    if (mainStr.find(toMatch) == 0)
-        return true;
-    else
-        return false;
+    return mainStr.find(toMatch) == 0;
 }
 
 
@@ -190,14 +179,25 @@ bool Utils::StartsWithCaseInsensitive(std::string mainStr, std::string toMatch) 
     // Convert toMatch to lower case
     std::transform(toMatch.begin(), toMatch.end(), toMatch.begin(), ::tolower);
 
-    if (mainStr.find(toMatch) == 0)
-        return true;
-    else
-        return false;
+    return mainStr.find(toMatch) == 0;
 }
 
 bool Utils::CaseInsensitiveStringCompare(std::string &str1, std::string &str2) {
     return ((str1.size() == str2.size()) && std::equal(str1.begin(), str1.end(), str2.begin(), [](char &c1, char &c2) {
         return (c1 == c2 || std::toupper(c1) == std::toupper(c2));
     }));
+}
+
+std::vector<std::vector<int>> Utils::SplitDataSetIntoClasses(const std::vector<Instance> &train) {
+    std::vector<int> descriptor(train[0].GetDescriptor());
+    int labels = descriptor[descriptor.size() - 1];
+    std::vector<std::vector<int>> result(labels);
+    std::vector<std::list<int>> aux(labels);
+    for (int i = 0; i < train.size(); i++) {
+        aux[train[i].GetClass()].push_back(i);
+    }
+    for (int i = 0; i < labels; i++) {
+        result[i] = std::vector<int>(aux[i].begin(), aux[i].end());
+    }
+    return result;
 }

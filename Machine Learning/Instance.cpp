@@ -7,7 +7,7 @@ Instance::Instance() {
     this->numerical = false;
     this->categorical = false;
     this->mixed = false;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -20,7 +20,7 @@ Instance::Instance(const std::list<float> &feat) {
     this->numerical = true;
     this->categorical = false;
     this->mixed = false;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -33,7 +33,7 @@ Instance::Instance(const std::vector<float> &feat) {
     this->numerical = true;
     this->categorical = false;
     this->mixed = false;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -46,7 +46,7 @@ Instance::Instance(const std::list<int> &feat) {
     this->numerical = false;
     this->categorical = true;
     this->mixed = false;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -59,7 +59,7 @@ Instance::Instance(const std::vector<int> &feat) {
     this->numerical = false;
     this->categorical = true;
     this->mixed = false;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -73,7 +73,7 @@ Instance::Instance(const std::list<float> &numericFeat, const std::list<int> &ca
     this->numerical = false;
     this->categorical = false;
     this->mixed = true;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -87,7 +87,7 @@ Instance::Instance(const std::vector<float> &numericFeat, const std::list<int> &
     this->numerical = false;
     this->categorical = false;
     this->mixed = true;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -101,7 +101,7 @@ Instance::Instance(const std::list<float> &numericFeat, const std::vector<int> &
     this->numerical = false;
     this->categorical = false;
     this->mixed = true;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -115,7 +115,7 @@ Instance::Instance(const std::vector<float> &numericFeat, const std::vector<int>
     this->numerical = false;
     this->categorical = false;
     this->mixed = true;
-    this->multiLabel = 0;
+    this->multiLabel = false;
     this->label = -1;
     this->id = -1;
 }
@@ -190,7 +190,11 @@ std::string Instance::ToString() const {
 }
 
 int Instance::GetClass() const {
-    return label;
+    return this->label;
+}
+
+int Instance::GetID() const {
+    return this->id;
 }
 
 void Instance::SetDescriptor(const std::list<int> &d) {

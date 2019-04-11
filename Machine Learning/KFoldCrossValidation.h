@@ -15,6 +15,7 @@ public:
 
 protected:
     void Split();
+    void SplitStratified();
 
     std::vector<Instance> train;
     std::vector<std::vector<Instance>> trainFolds;

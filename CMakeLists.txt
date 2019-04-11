@@ -24,5 +24,5 @@ add_executable(MachineLearning
         "Machine Learning/Types.h"
         "Machine Learning/Utils.cpp"
         "Machine Learning/Utils.h"
-        "Machine Learning/Validation.h" "Machine Learning/KNN.h" "Machine Learning/KNN.cpp")
+        "Machine Learning/Validation.h" "Machine Learning/KNN.h" "Machine Learning/KNN.cpp" "Machine Learning/HEOM.cpp" "Machine Learning/HEOM.h" "Machine Learning/HVDM.cpp" "Machine Learning/HVDM.h")
 

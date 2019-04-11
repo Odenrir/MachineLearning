@@ -64,6 +64,8 @@ public:
 
     int GetClass() const;
 
+    int GetID() const;
+
     int CountNumericFeatures() const;
 
     int CountCategoricFeatures() const;

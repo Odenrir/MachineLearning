@@ -24,14 +24,14 @@ double Euclidean::Distance(const Instance &inst1, const Instance &inst2) {
 void Euclidean::Normalize(const std::vector<Instance> &train) {
     if (!train.empty()) {
         int featNumber = train[0].CountNumericFeatures();
-        std::vector<float>().swap(this->ranges);
-        this->ranges = std::vector<float>(featNumber);
+        std::vector<double>().swap(this->ranges);
+        this->ranges = std::vector<double>(featNumber);
         float max, min;
         for (int i = 0; i < featNumber; i++) {
             max = std::numeric_limits<float>::min();
             min = std::numeric_limits<float>::max();
-            for (int j = 0; j < train.size(); j++) {
-                float value = train[j].GetNumericFeature(i);
+            for (auto instance: train) {
+                float value = instance.GetNumericFeature(i);
                 if (value != std::numeric_limits<float>::infinity()) {
                     if (value < min) {
                         min = value;
@@ -41,7 +41,10 @@ void Euclidean::Normalize(const std::vector<Instance> &train) {
                     }
                 }
             }
-            this->ranges[i] = abs(max - min);
+            this->ranges[i] = fabs(max - min);
+            if (this->ranges[i] == 0) {
+                this->ranges[i] = 1;
+            }
         }
     }
 }

@@ -13,5 +13,5 @@ public:
     void Normalize(const std::vector<Instance> &train);
 
 protected:
-    std::vector<float> ranges;
+    std::vector<double> ranges;
 };

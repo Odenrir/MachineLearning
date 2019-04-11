@@ -1,6 +1,8 @@
 #include "Utils.h"
 #include "KNN.h"
 #include "Euclidean.h"
+#include "HEOM.h"
+#include "HVDM.h"
 #include "KFoldCrossValidation.h"
 #if defined(_WIN32) && defined(_DEBUG)
 #include <crtdbg.h>
@@ -20,10 +22,13 @@ int main(int argc, char* argv[])
 #if defined(_WIN32) && defined(_DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-    std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/diabetes.arff");
-    Euclidean euclidean;
-    euclidean.Normalize(train);
-    KNN algorithm(3, euclidean);
+	std::cout<<"Reading dataset...\n";
+    std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/labor.arff");
+    HVDM heom;
+    std::cout<<"Normalizing metric...\n";
+    heom.Normalize(train);
+    KNN algorithm(3, heom);
+    std::cout<<"Starting validation...\n";
     auto xval = new KFoldCrossValidation(10, train, algorithm);
     double avg = xval->Validate();
     std::cout << "avg acc: " << avg << "\n";

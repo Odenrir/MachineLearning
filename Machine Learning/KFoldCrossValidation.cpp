@@ -1,12 +1,14 @@
 #include "KFoldCrossValidation.h"
 
 KFoldCrossValidation::KFoldCrossValidation() {
+    this->k = 0;
 }
 
 KFoldCrossValidation::KFoldCrossValidation(int k, const std::vector<Instance> &train, Classifier &c) {
     this->train = train;
     this->k = k;
-    this->Split();
+    this->SplitStratified();
+    //this->Split();
     this->cl = &c;
 }
 
@@ -35,7 +37,6 @@ double KFoldCrossValidation::Validate() {
 void KFoldCrossValidation::Split() {
     int ts = (((int) this->train.size()) / this->k);
     int tr = (int) this->train.size() - ts;
-    int res = tr - (ts * this->k);
     int count = 0;
     this->trainFolds = std::vector<std::vector<Instance>>(this->k);
     this->testFolds = std::vector<std::vector<Instance>>(this->k);
@@ -58,5 +59,51 @@ void KFoldCrossValidation::Split() {
             }
         }
     }
+}
 
+void KFoldCrossValidation::SplitStratified() {
+    std::vector<std::vector<int>> split = Utils::SplitDataSetIntoClasses(this->train);
+    int ts = (((int) this->train.size()) / this->k);
+    int tr = (int) this->train.size() - ts;
+    std::vector<int> count(split.size(), 0);
+    this->trainFolds = std::vector<std::vector<Instance>>(this->k);
+    this->testFolds = std::vector<std::vector<Instance>>(this->k);
+
+    std::vector<int> tsv = std::vector<int>(split.size());
+    std::vector<int> trv = std::vector<int>(split.size());
+    for (int i = 0; i < split.size(); i++) {
+        if (split[i].size() < this->k) {
+            tsv[i] = 1;
+        } else {
+            tsv[i] = (((int) split[i].size()) / this->k);
+        }
+        trv[i] = split[i].size() - tsv[i];
+    }
+    auto trainAux = std::vector<std::list<Instance>>(this->k);
+    auto testAux = std::vector<std::list<Instance>>(this->k);
+
+    for (int i = 0; i < this->k; i++) {
+        std::list<Instance> test;
+        for (int j = 0; j < split.size(); j++) {
+            if (count[j] < split[j].size()) {
+                for (int l = 0; l < tsv[j]; l++) {
+                    test.push_back(this->train[split[j][count[j]]]);
+                    count[j]++;
+                }
+            }
+        }
+        this->testFolds[i] = std::vector<Instance>(test.begin(), test.end());
+    }
+
+    for (int i = 0; i < this->k; i++) {
+        std::list<Instance> training;
+        for (int j = 0; j < split.size(); j++) {
+            for (int l = 0; l < trv[j]; l++) {
+                if (l < tsv[j] * i || l >= tsv[j] * (i + 1)) {
+                    training.push_back(this->train[split[j][l]]);
+                }
+            }
+        }
+        this->trainFolds[i] = std::vector<Instance>(training.begin(), training.end());
+    }
 }

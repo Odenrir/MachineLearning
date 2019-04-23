@@ -12,16 +12,16 @@ public:
 
     double Distance(const Instance &inst1, const Instance &inst2) override;
 
-    void Normalize(const std::vector<Instance> &train);
+    void Normalize(const std::vector<Instance> &dataset);
 
 protected:
     double VDM(int index, int x, int y);
 
     double normalizedDiff(int index, float x, float y);
 
-    void ComputeOccurrences(const std::vector<Instance> &train);
+    void ComputeOccurrences(const std::vector<Instance> &dataset);
 
-    void ComputeStandardDeviation(const std::vector<Instance> &train);
+    void ComputeStandardDeviation(const std::vector<Instance> &dataset);
 
     std::vector<double> stdDev4;
     std::map<int, std::map<int, std::map<int, int>>> naC;

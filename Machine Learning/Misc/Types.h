@@ -16,3 +16,19 @@ struct Distances {
         return (val < str.val);
     }
 };
+
+struct Relevance {
+    int id;
+    double val;
+
+    Relevance() {}
+
+    Relevance(int id, double val) {
+        this->id = id;
+        this->val = val;
+    }
+
+    bool operator<(const Relevance &str) const {
+        return (val < str.val);
+    }
+};

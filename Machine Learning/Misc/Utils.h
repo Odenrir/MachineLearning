@@ -14,13 +14,7 @@ public:
 
     static std::vector<Instance> ReadARFF(const std::string &training);
 
-    static Instance StringToInstanceRICATIM(std::string &line);
-
-    static std::vector<Instance> ReadCSVRICATIM(const std::string &training);
-
-    static void ReadLabelsRICATIM(const std::string &labels, std::vector<Instance> &instances);
-
-    static void PrintInstance(Instance &inst);
+    static std::vector<Instance> ReadCSV(const std::string &training);
 
     static bool CompareInstances(const std::vector<Instance> &inst1, const std::vector<Instance> &inst2);
 
@@ -38,7 +32,9 @@ public:
 
     static bool CaseInsensitiveStringCompare(std::string &str1, std::string &str2);
 
-    static std::vector<std::vector<int>> SplitDataSetIntoClasses(const std::vector<Instance> &train);
+    static std::vector<std::vector<int>> SplitDataSetIntoClassesIndices(const std::vector<Instance> &dataset);
+
+    static std::vector<std::vector<Instance>> SplitDataSetIntoClasses(const std::vector<Instance> &dataset);
 
 private:
 

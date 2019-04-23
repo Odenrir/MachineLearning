@@ -10,20 +10,14 @@
 class Instance {
 public:
     bool operator==(const Instance& inst) {
-        //std::vector<float> numericFeat1 = this->GetNumericFeatures();
-        //std::vector<float> numericFeat2 = inst.GetNumericFeatures();
-        //std::vector<int> categoricFeat1 = this->GetCategoricFeatures();
-        //std::vector<int> categoricFeat2 = inst.GetCategoricFeatures();
         int numFeatSize = this->CountNumericFeatures();
         int catFeatSize = this->CountCategoricFeatures();
 
         for (int i = 0; i < numFeatSize; i++) {
-            //if (numericFeat1[i] != numericFeat2[i])
             if (this->GetNumericFeature(i) != inst.GetNumericFeature(i))
                 return false;
         }
         for (int i = 0; i < catFeatSize; i++) {
-            //if (categoricFeat1[i] != categoricFeat2[i])
             if (this->GetCategoricFeature(i) != inst.GetCategoricFeature(i))
                 return false;
         }
@@ -57,6 +51,12 @@ public:
     int GetCategoricFeature(int index) const;
 
     bool IsMultilabel() const;
+
+    bool IsNumeric() const;
+
+    bool IsNominal() const;
+
+    bool IsMixed() const;
 
     std::list<int> &GetClasses();
 

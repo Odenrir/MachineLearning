@@ -1,10 +1,10 @@
-#include "KFoldCrossValidation.h"
+#include "kFoldCrossValidation.h"
 
-KFoldCrossValidation::KFoldCrossValidation() {
+kFoldCrossValidation::kFoldCrossValidation() {
     this->k = 0;
 }
 
-KFoldCrossValidation::KFoldCrossValidation(int k, const std::vector<Instance> &train, Classifier &c) {
+kFoldCrossValidation::kFoldCrossValidation(int k, const std::vector<Instance> &train, Classifier &c) {
     this->train = train;
     this->k = k;
     this->SplitStratified();
@@ -12,29 +12,29 @@ KFoldCrossValidation::KFoldCrossValidation(int k, const std::vector<Instance> &t
     this->cl = &c;
 }
 
-void KFoldCrossValidation::Init() {
+void kFoldCrossValidation::Init() {
 }
 
-double KFoldCrossValidation::Validate() {
+double kFoldCrossValidation::Validate() {
     double acc = 0;
     float temp;
     std::vector<float> accs(this->k);
     std::vector<int> predict;
     for (int i = 0; i < this->k; i++) {
-        std::cout << "Learning Fold " << i << "\n";
+        std::cout << "Learning Fold " << i + 1 << "\n";
         this->cl->Learn(this->trainFolds[i]);
-        std::cout << "Classifying Fold " << i << "\n";
+        std::cout << "Classifying Fold " << i + 1 << "\n";
         predict = this->cl->Classify(this->testFolds[i]);
         temp = Utils::Accuraccy(this->testFolds[i], predict);
         acc += temp;
         accs[i] = temp;
-        std::cout << "acc " << i << ": " << temp << "\n";
+        std::cout << "acc " << i + 1 << ": " << temp << "\n";
     }
     acc = acc / this->k;
     return acc;
 }
 
-void KFoldCrossValidation::Split() {
+void kFoldCrossValidation::Split() {
     int ts = (((int) this->train.size()) / this->k);
     int tr = (int) this->train.size() - ts;
     int count = 0;
@@ -61,10 +61,9 @@ void KFoldCrossValidation::Split() {
     }
 }
 
-void KFoldCrossValidation::SplitStratified() {
-    std::vector<std::vector<int>> split = Utils::SplitDataSetIntoClasses(this->train);
+void kFoldCrossValidation::SplitStratified() {
+    std::vector<std::vector<int>> split = Utils::SplitDataSetIntoClassesIndices(this->train);
     int ts = (((int) this->train.size()) / this->k);
-    int tr = (int) this->train.size() - ts;
     std::vector<int> count(split.size(), 0);
     this->trainFolds = std::vector<std::vector<Instance>>(this->k);
     this->testFolds = std::vector<std::vector<Instance>>(this->k);

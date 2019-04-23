@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Instance.h"
+#include "Misc/Instance.h"
 #include <cmath>
 
 class Metric {

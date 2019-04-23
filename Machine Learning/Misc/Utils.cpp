@@ -20,7 +20,7 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
     std::string data("@DATA");
     std::string numeric("NUMERIC");
     std::string missing("?");
-    std::string empty();
+    std::string empty;
     int numericValues = 0, nominalValues = 0, id = 0;
     if (file.is_open()) {
         while (getline(file, line)) {
@@ -90,6 +90,92 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
                 }
                 inst.SetID(id);
                 inst.SetClass(vectorMapNominal[k][splitString[descriptorVector.size() - 1]]);
+                inst.SetDescriptor(descriptorVector);
+                id++;
+                result.push_back(inst);
+            }
+        }
+
+    }
+    std::vector<Instance> vecRes{std::make_move_iterator(std::begin(result)),
+                                 std::make_move_iterator(std::end(result))};
+    return vecRes;
+}
+
+std::vector<Instance> Utils::ReadCSV(const std::string &training) {
+    std::list<Instance> result;
+    Instance inst;
+    std::vector<std::map<std::string, int>> vectorMapNominal;
+    std::list<int> descriptorList;
+    std::vector<int> descriptorVector;
+    std::vector<std::string> splitString;
+    std::vector<std::string> splitNominal;
+    std::ifstream file(training);
+    std::string line, aux;
+    bool dataReading = false;
+    std::string missing("?");
+    std::string empty;
+    int numericValues = 0, nominalValues = 0, id = 0;
+    if (file.is_open()) {
+        while (getline(file, line)) {
+            if (!dataReading && !CaseInsensitiveStringCompare(line, empty)) {
+                boost::split(splitString, line, boost::is_any_of(","));
+
+                for (const std::string& headFeature: splitString) {
+                    descriptorList.push_back(atoi(boost::algorithm::trim_copy(headFeature).c_str()));
+                }
+                dataReading = true;
+                descriptorVector = std::vector<int>(descriptorList.begin(), descriptorList.end());
+                for (auto x : descriptorVector) {
+                    if (x == 0) {
+                        numericValues++;
+                    } else {
+                        nominalValues++;
+                    }
+                }
+                vectorMapNominal = std::vector<std::map<std::string, int>>(nominalValues);
+                nominalValues--;
+            } else if (dataReading && !CaseInsensitiveStringCompare(line, empty)) {
+                std::vector<float> numericFeatures(numericValues);
+                std::vector<int> nominalFeatures(nominalValues);
+                int j = 0, k = 0;
+                boost::split(splitString, line, boost::is_any_of(","));
+                for (int i = 0; i < descriptorVector.size() - 1; i++) {
+                    if (descriptorVector[i] == 0) {
+                        std::string featAux(boost::algorithm::trim_copy(splitString[i]));
+                        if (CaseInsensitiveStringCompare(featAux, missing)) {
+                            numericFeatures[j] = std::numeric_limits<float>::infinity();
+                        } else {
+                            numericFeatures[j] = (float) atof(featAux.c_str());
+                        }
+                        j++;
+                    } else {
+                        if (vectorMapNominal[k].count(splitString[i]) > 0) {
+                            nominalFeatures[k] = vectorMapNominal[k][splitString[i]];
+                        } else if (!CaseInsensitiveStringCompare(splitString[k], missing)){
+                            vectorMapNominal[k][splitString[i]] = vectorMapNominal[k].size();
+                            nominalFeatures[k] = vectorMapNominal[k][splitString[i]];
+                        } else {
+                            nominalFeatures[k] = -1;
+                        }
+                        k++;
+                    }
+                }
+                if (nominalValues == 0) {
+                    inst = Instance(numericFeatures);
+                } else if (numericValues == 0) {
+                    inst = Instance(nominalFeatures);
+                } else {
+                    inst = Instance(numericFeatures, nominalFeatures);
+                }
+                inst.SetID(id);
+                aux = boost::algorithm::trim_copy(splitString[descriptorVector.size() - 1]);
+                if (vectorMapNominal[k].count(aux) > 0) {
+                    inst.SetClass(vectorMapNominal[k][aux]);
+                } else {
+                    vectorMapNominal[k][aux] = vectorMapNominal[k].size();
+                    inst.SetClass(vectorMapNominal[k][aux]);
+                }
                 inst.SetDescriptor(descriptorVector);
                 id++;
                 result.push_back(inst);
@@ -188,16 +274,30 @@ bool Utils::CaseInsensitiveStringCompare(std::string &str1, std::string &str2) {
     }));
 }
 
-std::vector<std::vector<int>> Utils::SplitDataSetIntoClasses(const std::vector<Instance> &train) {
-    std::vector<int> descriptor(train[0].GetDescriptor());
+std::vector<std::vector<int>> Utils::SplitDataSetIntoClassesIndices(const std::vector<Instance> &dataset) {
+    std::vector<int> descriptor(dataset[0].GetDescriptor());
     int labels = descriptor[descriptor.size() - 1];
     std::vector<std::vector<int>> result(labels);
     std::vector<std::list<int>> aux(labels);
-    for (int i = 0; i < train.size(); i++) {
-        aux[train[i].GetClass()].push_back(i);
+    for (int i = 0; i < dataset.size(); i++) {
+        aux[dataset[i].GetClass()].push_back(i);
     }
     for (int i = 0; i < labels; i++) {
         result[i] = std::vector<int>(aux[i].begin(), aux[i].end());
+    }
+    return result;
+}
+
+std::vector<std::vector<Instance>> Utils::SplitDataSetIntoClasses(const std::vector<Instance> &dataset) {
+    std::vector<int> descriptor(dataset[0].GetDescriptor());
+    int labels = descriptor[descriptor.size() - 1];
+    std::vector<std::vector<Instance>> result(labels);
+    std::vector<std::list<Instance>> aux(labels);
+    for (const auto& instance : dataset) {
+        aux[instance.GetClass()].push_back(instance);
+    }
+    for (int i = 0; i < labels; i++) {
+        result[i] = std::vector<Instance>(aux[i].begin(), aux[i].end());
     }
     return result;
 }

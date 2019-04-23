@@ -1,9 +1,13 @@
-#include "Utils.h"
-#include "KNN.h"
-#include "Euclidean.h"
-#include "HEOM.h"
-#include "HVDM.h"
-#include "KFoldCrossValidation.h"
+#include "Misc/Utils.h"
+#include "Misc/Plot.h"
+#include "Classify/kNN.h"
+#include "InstanceSelection/PSR.h"
+#include "InstanceSelection/PSC.h"
+#include "Clustering/kMeans.h"
+#include "Metrics/Euclidean.h"
+#include "Metrics/HEOM.h"
+#include "Metrics/HVDM.h"
+#include "Validation/kFoldCrossValidation.h"
 #if defined(_WIN32) && defined(_DEBUG)
 #include <crtdbg.h>
 #endif
@@ -23,15 +27,24 @@ int main(int argc, char* argv[])
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 	std::cout<<"Reading dataset...\n";
-    std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/labor.arff");
-    HVDM heom;
+    std::vector<Instance> train = Utils::ReadCSV("/home/aldair/Documentos/sint.csv");
+    /*for(auto ins: train) {
+        std::cout<<ins.ToString();
+    }*/
+    HEOM heom;
     std::cout<<"Normalizing metric...\n";
     heom.Normalize(train);
-    KNN algorithm(3, heom);
-    std::cout<<"Starting validation...\n";
-    auto xval = new KFoldCrossValidation(10, train, algorithm);
-    double avg = xval->Validate();
-    std::cout << "avg acc: " << avg << "\n";
+    //kNN algorithm(3, heom);
+    //std::cout<<"Starting validation...\n";
+    //auto xval = new kFoldCrossValidation(10, train, algorithm);
+    //double avg = xval->Validate();
+    //std::cout << "avg acc: " << avg << "\n";
+    kMeans pam(4, heom);
+    auto cl = pam.BuildClustering(train);
+    Plot::PlotScatter2D(cl);
+    //PSC sel(6, heom);
+    //auto select = sel.DoSelection(train);
+    //Plot::ScalePlotScatter2D(train, select);
 	/*std::vector<Instance> train = Utils::ReadCSVRICATIM(std::string(argv[1]));
 	Utils::ReadLabelsRICATIM(std::string(argv[2]), train);
 	std::vector<Instance> trainVal = Utils::ReadCSVRICATIM(std::string(argv[3]));
@@ -51,7 +64,7 @@ int main(int argc, char* argv[])
 	std::cout << "Finished\n";
 	Utils::WritePredict(p, "answer.txt");*/
 	/*Classifier *alg = ricatim;		
-	KFoldCrossValidation *xval = new KFoldCrossValidation(10, train, *alg);
+	kFoldCrossValidation *xval = new kFoldCrossValidation(10, train, *alg);
 	double avg = xval->Validate();
 	std::cout << "avg acc: " << avg << "\n";*/
 	

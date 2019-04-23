@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "HVDM.h"
 
 
@@ -57,9 +59,9 @@ double HVDM::VDM(int index, int x, int y) {
         } else {
             nayci = 0;
         }
-        result += pow(fabs(((float) naxci / naxi) - ((float) nayci / nayi)), 2);
+        result += pow(std::fabs(((float) naxci / naxi) - ((float) nayci / nayi)), 2);
     }
-    return sqrt(result);
+    return sqrt(result);// / sqrt(2);//sqrt(this->labels);
 }
 
 double HVDM::normalizedDiff(int index, float x, float y) {
@@ -70,22 +72,22 @@ double HVDM::normalizedDiff(int index, float x, float y) {
 }
 
 //Must be used before any call to distance function
-void HVDM::Normalize(const std::vector<Instance> &train) {
-    if (!train.empty()) {
-        this->ComputeStandardDeviation(train);
-        this->ComputeOccurrences(train);
-        std::vector<int> descriptor(train[0].GetDescriptor());
+void HVDM::Normalize(const std::vector<Instance> &dataset) {
+    if (!dataset.empty()) {
+        this->ComputeStandardDeviation(dataset);
+        this->ComputeOccurrences(dataset);
+        std::vector<int> descriptor(dataset[0].GetDescriptor());
         this->labels = descriptor[descriptor.size() - 1];
     }
 }
 
-void HVDM::ComputeOccurrences(const std::vector<Instance> &train) {
-    if (!train.empty()) {
-        int featNumber = train[0].CountCategoricFeatures();
+void HVDM::ComputeOccurrences(const std::vector<Instance> &dataset) {
+    if (!dataset.empty()) {
+        int featNumber = dataset[0].CountCategoricFeatures();
         this->na.clear();
         this->naC.clear();
         for (int i = 0; i < featNumber; i++) {
-            for (auto instance: train) {
+            for (const auto& instance: dataset) {
                 int value = instance.GetCategoricFeature(i);
                 if (value != -1) {
                     if (this->na[i].count(value) > 0) {
@@ -95,7 +97,7 @@ void HVDM::ComputeOccurrences(const std::vector<Instance> &train) {
                     }
                 }
             }
-            for (auto instance: train) {
+            for (const auto& instance: dataset) {
                 int value = instance.GetCategoricFeature(i);
                 if (value != -1) {
                     int category = instance.GetClass();
@@ -110,16 +112,16 @@ void HVDM::ComputeOccurrences(const std::vector<Instance> &train) {
     }
 }
 
-void HVDM::ComputeStandardDeviation(const std::vector<Instance> &train) {
+void HVDM::ComputeStandardDeviation(const std::vector<Instance> &dataset) {
     double mean, squaresMean, meanSquare;
     int n;
-    if (!train.empty()) {
-        int featNumber = train[0].CountNumericFeatures();
+    if (!dataset.empty()) {
+        int featNumber = dataset[0].CountNumericFeatures();
         std::vector<double>().swap(this->stdDev4);
         this->stdDev4 = std::vector<double>(featNumber);
         for (int i = 0; i < featNumber; i++) {
             mean = 0, squaresMean = 0, n = 0;
-            for (auto instance : train) {
+            for (const auto& instance : dataset) {
                 float value = instance.GetNumericFeature(i);
                 if (value != std::numeric_limits<float>::infinity()) {
                     mean += value;

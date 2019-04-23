@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Validation.h"
-#include "Utils.h"
+#include "Misc/Utils.h"
 
-class KFoldCrossValidation : public Validation {
+class kFoldCrossValidation : public Validation {
 public:
-    KFoldCrossValidation();
+    kFoldCrossValidation();
 
-    KFoldCrossValidation(int k, const std::vector<Instance> &train, Classifier &c);
+    kFoldCrossValidation(int k, const std::vector<Instance> &train, Classifier &c);
 
     void Init() override;
 

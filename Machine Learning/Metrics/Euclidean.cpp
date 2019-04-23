@@ -1,3 +1,5 @@
+#include <cmath>
+
 #include "Euclidean.h"
 
 Euclidean::Euclidean() {
@@ -21,16 +23,16 @@ double Euclidean::Distance(const Instance &inst1, const Instance &inst2) {
 }
 
 //Must be used before any call to distance function
-void Euclidean::Normalize(const std::vector<Instance> &train) {
-    if (!train.empty()) {
-        int featNumber = train[0].CountNumericFeatures();
+void Euclidean::Normalize(const std::vector<Instance> &dataset) {
+    if (!dataset.empty()) {
+        int featNumber = dataset[0].CountNumericFeatures();
         std::vector<double>().swap(this->ranges);
         this->ranges = std::vector<double>(featNumber);
         float max, min;
         for (int i = 0; i < featNumber; i++) {
             max = std::numeric_limits<float>::min();
             min = std::numeric_limits<float>::max();
-            for (auto instance: train) {
+            for (const auto& instance: dataset) {
                 float value = instance.GetNumericFeature(i);
                 if (value != std::numeric_limits<float>::infinity()) {
                     if (value < min) {
@@ -41,7 +43,7 @@ void Euclidean::Normalize(const std::vector<Instance> &train) {
                     }
                 }
             }
-            this->ranges[i] = fabs(max - min);
+            this->ranges[i] = std::fabs(max - min);
             if (this->ranges[i] == 0) {
                 this->ranges[i] = 1;
             }

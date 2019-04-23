@@ -1,16 +1,13 @@
 #ifndef MACHINELEARNING_KNN_H
 #define MACHINELEARNING_KNN_H
-
-#endif //MACHINELEARNING_KNN_H
-
 #include "Classifier.h"
-#include "Metric.h"
-#include "Utils.h"
-#include "Types.h"
+#include "Metrics/Metric.h"
+#include "Misc/Utils.h"
+#include "Misc/Types.h"
 
-class KNN : public Classifier {
+class kNN : public Classifier {
 public:
-    KNN(int k, Metric &m);
+    kNN(int k, Metric &m);
 
     void Init() override;
 
@@ -32,3 +29,4 @@ protected:
     std::vector<Distances> dist;
     std::vector<int> vClasses;
 };
+#endif //MACHINELEARNING_KNN_H

@@ -7,6 +7,7 @@
 #include <map>
 #include <cctype>
 #include <boost/algorithm/string.hpp>
+#include <regex>
 
 class Utils {
 public:

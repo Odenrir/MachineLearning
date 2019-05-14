@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
     std::string ext = ".arff";
     std::vector<std::string> files = {"diabetes", "iris", "liver", "sonar", "thyroid", "wine", "letter", "spam",
                                       "segment", "pendigits", "kdd_synthetic_control"};
+
     std::cout << "Reading dataset...\n";
 
     std::vector<Instance> train;

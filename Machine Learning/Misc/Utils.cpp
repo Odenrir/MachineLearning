@@ -25,6 +25,7 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
     if (file.is_open()) {
         while (getline(file, line)) {
             if (!dataReading && StartsWithCaseInsensitive(line, attribute)) {
+                line = std::regex_replace(line, std::regex("\\s{2,}"), " ");
                 std::replace(line.begin(), line.end(), '\t', ' ');
                 boost::split(splitString, line, boost::is_any_of(" "));
 

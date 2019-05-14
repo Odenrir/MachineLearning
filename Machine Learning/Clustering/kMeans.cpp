@@ -36,7 +36,9 @@ void kMeans::Init() {
 
 
 std::vector<std::vector<Instance>> kMeans::BuildClustering(const std::vector<Instance> &dataset) {
+    this->start = std::chrono::high_resolution_clock::now();
     if (dataset.empty()) {
+        this->stop = std::chrono::high_resolution_clock::now();
         return std::vector<std::vector<Instance>>();
     }
     this->distr = std::uniform_int_distribution<>(0, dataset.size() - 1);
@@ -59,7 +61,7 @@ std::vector<std::vector<Instance>> kMeans::BuildClustering(const std::vector<Ins
         for (int i = 0; i < this->k; i++) {
             clusters[i].clear();
         }
-        for (const auto& instance : dataset) {
+        for (const auto &instance : dataset) {
             minDist = std::numeric_limits<double>::max();
             for (int i = 0; i < this->k; i++) {
                 auxDist = m->Distance(instance, this->centroids[i]);
@@ -79,6 +81,7 @@ std::vector<std::vector<Instance>> kMeans::BuildClustering(const std::vector<Ins
         }
 
     } while (!Utils::CompareInstances(this->centroids, oldMeans));
+    this->stop = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<Instance>> result(this->k);
     for (int i = 0; i < this->k; i++) {
         result[i] = std::vector<Instance>(clusters[i].begin(), clusters[i].end());
@@ -94,13 +97,13 @@ Instance kMeans::ComputeCentroid(const std::list<Instance> &cluster) {
     std::vector<float> featC;
     if (!cluster.empty()) {
         featC = std::vector<float>(cluster.back().CountNumericFeatures(), 0);
-        for (const auto& instance: cluster) {
+        for (const auto &instance: cluster) {
             for (int i = 0; i < featC.size(); i++) {
                 featC[i] += instance.GetNumericFeature(i);
             }
         }
 
-        for (float & feat : featC) {
+        for (float &feat : featC) {
             feat /= cluster.size();
         }
     } else {
@@ -108,4 +111,5 @@ Instance kMeans::ComputeCentroid(const std::list<Instance> &cluster) {
     }
     return Instance(featC);
 }
+
 

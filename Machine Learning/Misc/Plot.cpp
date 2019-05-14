@@ -68,8 +68,8 @@ void Plot::ScalePlotScatter2D(const std::vector<std::vector<Instance>> &referenc
                               const std::vector<std::vector<Instance>> &clusters) {
     if (!reference.empty() && !clusters.empty()) {
         std::list<Instance> aux;
-        for (const auto& category : reference) {
-            for (const auto & instance : category) {
+        for (const auto &category : reference) {
+            for (const auto &instance : category) {
                 aux.push_back(instance);
             }
         }
@@ -99,7 +99,7 @@ void Plot::ScalePlotScatter2D(const std::vector<std::vector<Instance>> &referenc
     }
 }
 
-void Plot::Scatter(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y) {
+void Plot::Scatter(const std::vector<std::vector<double>> &x, const std::vector<std::vector<double>> &y) {
     plt::figure_size(1200, 780);
     for (int i = 0; i < x.size(); i++) {
         plt::plot(x[i], y[i], "o");
@@ -108,7 +108,7 @@ void Plot::Scatter(const std::vector<std::vector<double>>& x, const std::vector<
 }
 
 void
-Plot::ScatterLimit(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y, double xMin,
+Plot::ScatterLimit(const std::vector<std::vector<double>> &x, const std::vector<std::vector<double>> &y, double xMin,
                    double xMax, double yMin, double yMax) {
     plt::figure_size(1200, 780);
     plt::xlim(xMin, xMax);

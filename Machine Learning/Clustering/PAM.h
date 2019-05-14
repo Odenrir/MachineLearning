@@ -1,12 +1,13 @@
 #ifndef MACHINELEARNING_PAM_H
 #define MACHINELEARNING_PAM_H
+
 #include "Clustering.h"
 #include "Metrics/Metric.h"
 #include "Misc/Types.h"
 #include "Misc/Utils.h"
 #include <random>
 
-class PAM: public Clustering {
+class PAM : public Clustering {
 public:
     PAM(int k, Metric &m);
 
@@ -22,9 +23,9 @@ public:
 
 protected:
 
-    Instance ComputeMedoid(const std::vector<Instance>& cluster);
+    Instance ComputeMedoid(const std::vector<Instance> &cluster);
 
-    int k, it, seed, featuresSize;
+    int k, it, seed;
     std::mt19937 gen;
     std::uniform_int_distribution<> distr;
     Metric *m;

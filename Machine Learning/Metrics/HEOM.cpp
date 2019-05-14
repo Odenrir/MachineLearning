@@ -43,7 +43,7 @@ void HEOM::Normalize(const std::vector<Instance> &dataset) {
         for (int i = 0; i < featNumber; i++) {
             max = std::numeric_limits<float>::min();
             min = std::numeric_limits<float>::max();
-            for (const auto& instance: dataset) {
+            for (const auto &instance: dataset) {
                 float value = instance.GetNumericFeature(i);
                 if (value != std::numeric_limits<float>::infinity()) {
                     if (value < min) {

@@ -1,5 +1,6 @@
 #ifndef MACHINELEARNING_KNN_H
 #define MACHINELEARNING_KNN_H
+
 #include "Classifier.h"
 #include "Metrics/Metric.h"
 #include "Misc/Utils.h"
@@ -7,15 +8,16 @@
 
 class kNN : public Classifier {
 public:
+
     kNN(int k, Metric &m);
 
     void Init() override;
 
     void Learn(const std::vector<Instance> &train) override;
 
-    int Classify(Instance &inst) override;
+    int Classify(const Instance &inst) override;
 
-    const std::vector<int> Classify(std::vector<Instance> &test) override;
+    const std::vector<int> Classify(const std::vector<Instance> &test) override;
 
 protected:
 
@@ -29,4 +31,5 @@ protected:
     std::vector<Distances> dist;
     std::vector<int> vClasses;
 };
+
 #endif //MACHINELEARNING_KNN_H

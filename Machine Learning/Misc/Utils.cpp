@@ -25,6 +25,7 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
     if (file.is_open()) {
         while (getline(file, line)) {
             if (!dataReading && StartsWithCaseInsensitive(line, attribute)) {
+                std::replace(line.begin(), line.end(), '\t', ' ');
                 boost::split(splitString, line, boost::is_any_of(" "));
 
                 if (CaseInsensitiveStringCompare(splitString[2], numeric)) {
@@ -58,7 +59,8 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
                     }
                 }
                 nominalValues--;
-            } else if (dataReading && !StartsWithCaseInsensitive(line, description) && !CaseInsensitiveStringCompare(line, empty)) {
+            } else if (dataReading && !StartsWithCaseInsensitive(line, description) &&
+                       !CaseInsensitiveStringCompare(line, empty)) {
                 std::vector<float> numericFeatures(numericValues);
                 std::vector<int> nominalFeatures(nominalValues);
                 int j = 0, k = 0;
@@ -88,11 +90,14 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
                 } else {
                     inst = Instance(numericFeatures, nominalFeatures);
                 }
-                inst.SetID(id);
-                inst.SetClass(vectorMapNominal[k][splitString[descriptorVector.size() - 1]]);
-                inst.SetDescriptor(descriptorVector);
-                id++;
-                result.push_back(inst);
+                if (vectorMapNominal[k].count(boost::algorithm::trim_copy(splitString[descriptorVector.size() - 1])) >
+                    0) {
+                    inst.SetID(id);
+                    inst.SetClass(vectorMapNominal[k][splitString[descriptorVector.size() - 1]]);
+                    inst.SetDescriptor(descriptorVector);
+                    id++;
+                    result.push_back(inst);
+                }
             }
         }
 
@@ -121,7 +126,7 @@ std::vector<Instance> Utils::ReadCSV(const std::string &training) {
             if (!dataReading && !CaseInsensitiveStringCompare(line, empty)) {
                 boost::split(splitString, line, boost::is_any_of(","));
 
-                for (const std::string& headFeature: splitString) {
+                for (const std::string &headFeature: splitString) {
                     descriptorList.push_back(atoi(boost::algorithm::trim_copy(headFeature).c_str()));
                 }
                 dataReading = true;
@@ -152,7 +157,7 @@ std::vector<Instance> Utils::ReadCSV(const std::string &training) {
                     } else {
                         if (vectorMapNominal[k].count(splitString[i]) > 0) {
                             nominalFeatures[k] = vectorMapNominal[k][splitString[i]];
-                        } else if (!CaseInsensitiveStringCompare(splitString[k], missing)){
+                        } else if (!CaseInsensitiveStringCompare(splitString[k], missing)) {
                             vectorMapNominal[k][splitString[i]] = vectorMapNominal[k].size();
                             nominalFeatures[k] = vectorMapNominal[k][splitString[i]];
                         } else {
@@ -203,7 +208,7 @@ bool Utils::CompareInstances(const std::vector<Instance> &inst1, const std::vect
 }
 
 int Utils::Max(const std::vector<int> &c) {
-    int index = -1, maxV = INT32_MIN, i;
+    int index = -1, maxV = std::numeric_limits<int>::min(), i;
     for (i = 0; i < c.size(); i++) {
         if (c[i] > maxV) {
             maxV = c[i];
@@ -211,6 +216,24 @@ int Utils::Max(const std::vector<int> &c) {
         }
     }
     return index;
+}
+
+int Utils::SameClass(int c, const std::vector<std::vector<Instance>> &categories) {
+    for (int i = 0; i < categories.size(); i++) {
+        if (c == categories[i][0].GetClass()) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int Utils::SameClass(int c, const std::vector<Instance> &categories) {
+    for (int i = 0; i < categories.size(); i++) {
+        if (c == categories[i].GetClass()) {
+            return i;
+        }
+    }
+    return -1;
 }
 
 float Utils::Accuraccy(const std::vector<Instance> &orig, const std::vector<Instance> &predict) {
@@ -245,11 +268,20 @@ void Utils::WritePredict(const std::vector<int> &predict, const std::string &res
     myfile.close();
 }
 
+Instance Utils::FindInstance(int id, const std::vector<Instance> &dataset) {
+    for (auto instance: dataset) {
+        if (instance.GetID() == id) {
+            return instance;
+        }
+    }
+    return Instance();
+}
+
 /*
  * Case Sensitive Implementation of startsWith()
  * It checks if the string 'mainStr' starts with given string 'toMatch'
  */
-bool Utils::StartsWith(const std::string& mainStr, const std::string& toMatch) {
+bool Utils::StartsWith(const std::string &mainStr, const std::string &toMatch) {
     // std::string::find returns 0 if toMatch is found at starting
     return mainStr.find(toMatch) == 0;
 }
@@ -291,13 +323,25 @@ std::vector<std::vector<int>> Utils::SplitDataSetIntoClassesIndices(const std::v
 std::vector<std::vector<Instance>> Utils::SplitDataSetIntoClasses(const std::vector<Instance> &dataset) {
     std::vector<int> descriptor(dataset[0].GetDescriptor());
     int labels = descriptor[descriptor.size() - 1];
-    std::vector<std::vector<Instance>> result(labels);
+    int nonEmpty = 0, count = 0;
+    std::vector<std::vector<Instance>> result;
     std::vector<std::list<Instance>> aux(labels);
-    for (const auto& instance : dataset) {
+    for (const auto &instance : dataset) {
         aux[instance.GetClass()].push_back(instance);
     }
+    for (const auto &category: aux) {
+        if (!category.empty()) {
+            nonEmpty++;
+        }
+    }
+    result = std::vector<std::vector<Instance>>(nonEmpty);
     for (int i = 0; i < labels; i++) {
-        result[i] = std::vector<Instance>(aux[i].begin(), aux[i].end());
+        if (!aux[i].empty()) {
+            result[count] = std::vector<Instance>(aux[i].begin(), aux[i].end());
+            count++;
+        }
     }
     return result;
 }
+
+

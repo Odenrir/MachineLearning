@@ -5,7 +5,6 @@ PAM::PAM(int k, Metric &m) {
     this->k = k;
     this->it = std::numeric_limits<int>::infinity();
     this->seed = 0;
-    this->featuresSize = 0;
     this->m = &m;
     this->gen = std::mt19937(0);
     this->medoids = std::vector<Instance>(k);
@@ -15,7 +14,6 @@ PAM::PAM(int k, int it, Metric &m) {
     this->k = k;
     this->it = it;
     this->seed = 0;
-    this->featuresSize = 0;
     this->m = &m;
     this->gen = std::mt19937(0);
     this->medoids = std::vector<Instance>(k);
@@ -25,7 +23,6 @@ PAM::PAM(int k, int it, int seed, Metric &m) {
     this->k = k;
     this->it = it;
     this->seed = seed;
-    this->featuresSize = 0;
     this->m = &m;
     this->gen = std::mt19937(seed);
     this->medoids = std::vector<Instance>(k);
@@ -37,11 +34,12 @@ void PAM::Init() {
 
 
 std::vector<std::vector<Instance>> PAM::BuildClustering(const std::vector<Instance> &dataset) {
+    this->start = std::chrono::high_resolution_clock::now();
     if (dataset.empty()) {
+        this->stop = std::chrono::high_resolution_clock::now();
         return std::vector<std::vector<Instance>>();
     }
     this->distr = std::uniform_int_distribution<>(0, dataset.size() - 1);
-    this->featuresSize = dataset[0].CountNumericFeatures();
     std::vector<Instance> oldMeans(this->k);
     std::vector<Instance> auxCluster;
     std::vector<int> indices(this->k, -1);
@@ -61,7 +59,7 @@ std::vector<std::vector<Instance>> PAM::BuildClustering(const std::vector<Instan
         for (int i = 0; i < this->k; i++) {
             clusters[i].clear();
         }
-        for (const auto& instance : dataset) {
+        for (const auto &instance : dataset) {
             minDist = std::numeric_limits<double>::max();
             for (int i = 0; i < this->k; i++) {
                 auxDist = m->Distance(instance, this->medoids[i]);
@@ -83,6 +81,7 @@ std::vector<std::vector<Instance>> PAM::BuildClustering(const std::vector<Instan
         }
 
     } while (!Utils::CompareInstances(this->medoids, oldMeans));
+    this->stop = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<Instance>> result(this->k);
     for (int i = 0; i < this->k; i++) {
         result[i] = std::vector<Instance>(clusters[i].begin(), clusters[i].end());
@@ -127,7 +126,7 @@ Instance PAM::ComputeMedoid(const std::vector<Instance> &cluster) {
         }
     }
 
-    for (const auto& instance: cluster) {
+    for (const auto &instance: cluster) {
         if (distSum[instance.GetID()] < min) {
             min = distSum[instance.GetID()];
             representative = instance;

@@ -1,8 +1,9 @@
 #ifndef MACHINELEARNING_HEOM_H
 #define MACHINELEARNING_HEOM_H
+
 #include "Metric.h"
 
-class HEOM: public Metric {
+class HEOM : public Metric {
 public:
     HEOM();
 

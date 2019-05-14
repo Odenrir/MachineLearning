@@ -1,15 +1,37 @@
 #pragma once
 
+#include <map>
+
 struct Distances {
-    int x, y;
+    int x, y, cX, cY;
     double val;
 
     Distances() {}
 
-    Distances(int x, int y, double val) {
+    Distances(int x, int y, double val, int cX = -1, int cY = -2) {
         this->x = x;
         this->y = y;
         this->val = val;
+        this->cX = cX;
+        this->cY = cY;
+    }
+
+    bool isIncluded(int id) {
+        return id == x || id == y;
+    }
+
+    int getXY(int id) {
+        if (id == x) {
+            return y;
+        } else if (id == y) {
+            return x;
+        } else {
+            return -1;
+        }
+    }
+
+    bool sameClass() {
+        return cX == cY;
     }
 
     bool operator<(const Distances &str) const {
@@ -32,3 +54,44 @@ struct Relevance {
         return (val < str.val);
     }
 };
+
+struct LocalSet {
+    int id, idNE, category, cardinality;
+    double radius;
+    std::map<int, char> LS;
+
+    LocalSet() {}
+
+    LocalSet(int id, int idNE, double radius, int category) {
+        this->id = id;
+        this->idNE = idNE;
+        this->category = category;
+        this->radius = radius;
+        this->cardinality = 1;
+        this->LS[id] = 'v';
+    }
+
+    bool tryAppend(int id, double distance) {
+        if (distance < radius) {
+            this->LS[id] = 'v';
+            this->cardinality++;
+            return true;
+        }
+        return false;
+    }
+
+    bool isIn(int id) {
+        return this->LS.count(id) > 0;
+    }
+
+    bool operator<(const LocalSet &str) const {
+        return (cardinality < str.cardinality);
+    }
+};
+
+template<typename M, typename V>
+void MapToVec(const M &m, V &v) {
+    for (typename M::const_iterator it = m.begin(); it != m.end(); ++it) {
+        v.push_back(it->second);
+    }
+}

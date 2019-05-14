@@ -19,13 +19,13 @@ public:
     static void ScalePlotScatter2D(const std::vector<Instance> &reference, const std::vector<Instance> &dataset);
 
     static void ScalePlotScatter2D(const std::vector<std::vector<Instance>> &reference,
-                                     const std::vector<std::vector<Instance>> &clusters);
+                                   const std::vector<std::vector<Instance>> &clusters);
 
 private:
-    static void Scatter(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y);
+    static void Scatter(const std::vector<std::vector<double>> &x, const std::vector<std::vector<double>> &y);
 
-    static void ScatterLimit(const std::vector<std::vector<double>>& x, const std::vector<std::vector<double>>& y,
-                         double xMin, double xMax, double yMin, double yMax);
+    static void ScatterLimit(const std::vector<std::vector<double>> &x, const std::vector<std::vector<double>> &y,
+                             double xMin, double xMax, double yMin, double yMax);
 };
 
 

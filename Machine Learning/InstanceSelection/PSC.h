@@ -8,7 +8,7 @@
 #include "Misc/Utils.h"
 #include "Misc/Types.h"
 
-class PSC: public InstanceSelection {
+class PSC : public InstanceSelection {
 public:
     PSC(int c, Metric &m);
 

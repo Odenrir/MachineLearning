@@ -1,12 +1,13 @@
 #ifndef MACHINELEARNING_KMEANS_H
 #define MACHINELEARNING_KMEANS_H
+
 #include "Clustering.h"
 #include "Metrics/Metric.h"
 #include "Misc/Types.h"
 #include "Misc/Utils.h"
 #include <random>
 
-class kMeans: public Clustering {
+class kMeans : public Clustering {
 public:
     kMeans(int k, Metric &m);
 
@@ -22,7 +23,7 @@ public:
 
 protected:
 
-    Instance ComputeCentroid(const std::list<Instance>& cluster);
+    Instance ComputeCentroid(const std::list<Instance> &cluster);
 
     int k, it, seed, featuresSize;
     std::mt19937 gen;

@@ -9,7 +9,7 @@
 
 class Instance {
 public:
-    bool operator==(const Instance& inst) {
+    bool operator==(const Instance &inst) {
         int numFeatSize = this->CountNumericFeatures();
         int catFeatSize = this->CountCategoricFeatures();
 

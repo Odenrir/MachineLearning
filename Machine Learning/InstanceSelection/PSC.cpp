@@ -25,6 +25,8 @@ std::vector<Instance> PSC::DoSelection(const std::vector<Instance> &dataset) {
         std::vector<int> descriptor(dataset[0].GetDescriptor());
         this->c = t * descriptor[descriptor.size() - 1];
         numeric = dataset[0].IsNumeric();
+
+        this->start = std::chrono::high_resolution_clock::now();
         if (numeric) {
             kMeans kmeans(this->c, *this->m);
             clusters = kmeans.BuildClustering(dataset);
@@ -41,7 +43,7 @@ std::vector<Instance> PSC::DoSelection(const std::vector<Instance> &dataset) {
                     if (numeric) {
                         nearest = Instance();
                         min = std::numeric_limits<double>::max();
-                        for (const auto& instance: clusters[i]) {
+                        for (const auto &instance: clusters[i]) {
                             dist = this->m->Distance(instance, clusterRepresentatives[i]);
                             if (dist < min) {
                                 min = dist;
@@ -57,13 +59,14 @@ std::vector<Instance> PSC::DoSelection(const std::vector<Instance> &dataset) {
                 }
             }
         }
+        this->stop = std::chrono::high_resolution_clock::now();
 
-        for (const auto& rep: representatives) {
+        for (const auto &rep: representatives) {
             temp.push_back(rep);
         }
 
-        for (const auto& border: borders) {
-            for (const auto& instance: border) {
+        for (const auto &border: borders) {
+            for (const auto &instance: border) {
                 auto it = std::find(temp.begin(), temp.end(), instance);
                 if (it == temp.end()) {
                     temp.push_back(instance);
@@ -72,6 +75,9 @@ std::vector<Instance> PSC::DoSelection(const std::vector<Instance> &dataset) {
         }
 
         selected = std::vector<Instance>(temp.begin(), temp.end());
+    } else {
+        this->start = std::chrono::high_resolution_clock::now();
+        this->stop = std::chrono::high_resolution_clock::now();
     }
     return selected;
 }
@@ -105,10 +111,10 @@ PSC::FindBorders(const std::vector<Instance> &data) {
 
     for (int i = 0; i < clusters.size(); i++) {
         if (i != cm && !clusters[i].empty()) {
-            for (const auto& x: clusters[i]) {
+            for (const auto &x: clusters[i]) {
                 nearestc = Instance();
                 min = std::numeric_limits<double>::max();
-                for (const auto& y: clusters[cm]) {
+                for (const auto &y: clusters[cm]) {
                     dist = m->Distance(x, y);
                     if (dist < min) {
                         min = dist;
@@ -118,7 +124,7 @@ PSC::FindBorders(const std::vector<Instance> &data) {
 
                 nearestm = Instance();
                 min = std::numeric_limits<double>::max();
-                for (const auto& y: clusters[i]) {
+                for (const auto &y: clusters[i]) {
                     dist = m->Distance(nearestc, y);
                     if (dist < min) {
                         min = dist;

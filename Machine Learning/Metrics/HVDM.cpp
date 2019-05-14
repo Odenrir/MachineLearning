@@ -87,7 +87,7 @@ void HVDM::ComputeOccurrences(const std::vector<Instance> &dataset) {
         this->na.clear();
         this->naC.clear();
         for (int i = 0; i < featNumber; i++) {
-            for (const auto& instance: dataset) {
+            for (const auto &instance: dataset) {
                 int value = instance.GetCategoricFeature(i);
                 if (value != -1) {
                     if (this->na[i].count(value) > 0) {
@@ -97,7 +97,7 @@ void HVDM::ComputeOccurrences(const std::vector<Instance> &dataset) {
                     }
                 }
             }
-            for (const auto& instance: dataset) {
+            for (const auto &instance: dataset) {
                 int value = instance.GetCategoricFeature(i);
                 if (value != -1) {
                     int category = instance.GetClass();
@@ -121,7 +121,7 @@ void HVDM::ComputeStandardDeviation(const std::vector<Instance> &dataset) {
         this->stdDev4 = std::vector<double>(featNumber);
         for (int i = 0; i < featNumber; i++) {
             mean = 0, squaresMean = 0, n = 0;
-            for (const auto& instance : dataset) {
+            for (const auto &instance : dataset) {
                 float value = instance.GetNumericFeature(i);
                 if (value != std::numeric_limits<float>::infinity()) {
                     mean += value;

@@ -20,17 +20,23 @@ public:
 
     static int Max(const std::vector<int> &c);
 
+    static int SameClass(int c, const std::vector<std::vector<Instance>> &categories);
+
+    static int SameClass(int c, const std::vector<Instance> &categories);
+
     static float Accuraccy(const std::vector<Instance> &orig, const std::vector<Instance> &predict);
 
     static float Accuraccy(const std::vector<Instance> &orig, const std::vector<int> &predict);
 
     static void WritePredict(const std::vector<int> &predict, const std::string &resName);
 
-    static bool StartsWith(const std::string& mainStr, const std::string& toMatch);
+    static bool StartsWith(const std::string &mainStr, const std::string &toMatch);
 
     static bool StartsWithCaseInsensitive(std::string mainStr, std::string toMatch);
 
     static bool CaseInsensitiveStringCompare(std::string &str1, std::string &str2);
+
+    static Instance FindInstance(int id, const std::vector<Instance> &dataset);
 
     static std::vector<std::vector<int>> SplitDataSetIntoClassesIndices(const std::vector<Instance> &dataset);
 

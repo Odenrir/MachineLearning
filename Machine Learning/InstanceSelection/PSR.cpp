@@ -17,32 +17,39 @@ std::vector<Instance> PSR::DoSelection(const std::vector<Instance> &dataset) {
     std::list<Instance> temp;
     std::vector<Instance> selected;
 
-    for (int i = 0; i < classes.size(); i++) {
-        relevances = this->ComputeRelevances(classes[i]);
-        relevants[i] = this->SelectRelevants(relevances, classes[i]);
-        std::vector<Relevance>().swap(relevances);
-    }
-
-    for (int i = 0; i < classes.size(); i++) {
-        borders[i] = this->FindBorders(relevants[i], classes);
-    }
-
-    for (const auto& rel: relevants) {
-        for (const auto& instance: rel) {
-            temp.push_back(instance);
+    if (!dataset.empty()) {
+        this->start = std::chrono::high_resolution_clock::now();
+        for (int i = 0; i < classes.size(); i++) {
+            relevances = this->ComputeRelevances(classes[i]);
+            relevants[i] = this->SelectRelevants(relevances, classes[i]);
+            std::vector<Relevance>().swap(relevances);
         }
-    }
 
-    for (const auto& border: borders) {
-        for (const auto& instance: border) {
-            auto it = std::find(temp.begin(), temp.end(), instance);
-            if (it == temp.end()) {
+        for (int i = 0; i < classes.size(); i++) {
+            borders[i] = this->FindBorders(relevants[i], classes);
+        }
+        this->stop = std::chrono::high_resolution_clock::now();
+
+        for (const auto &rel: relevants) {
+            for (const auto &instance: rel) {
                 temp.push_back(instance);
             }
         }
-    }
 
-    selected = std::vector<Instance>(temp.begin(), temp.end());
+        for (const auto &border: borders) {
+            for (const auto &instance: border) {
+                auto it = std::find(temp.begin(), temp.end(), instance);
+                if (it == temp.end()) {
+                    temp.push_back(instance);
+                }
+            }
+        }
+
+        selected = std::vector<Instance>(temp.begin(), temp.end());
+    } else {
+        this->start = std::chrono::high_resolution_clock::now();
+        this->stop = std::chrono::high_resolution_clock::now();
+    }
     return selected;
 }
 
@@ -81,13 +88,13 @@ PSR::FindBorders(const std::vector<Instance> &relevants, const std::vector<std::
     double minDist, distance;
     int x, y;
     std::string key;
-    for (const auto& relevant: relevants) {
+    for (const auto &relevant: relevants) {
         x = relevant.GetID();
-        for (const auto& category : complement) {
+        for (const auto &category : complement) {
             if (!category.empty() && category[0].GetClass() != relevant.GetClass()) {
                 minDist = std::numeric_limits<double>::max();
-                for (int i = 0; i < category.size(); i++) {
-                    y = category[i].GetID();
+                for (const auto &instance : category) {
+                    y = instance.GetID();
                     if (x < y) {
                         key = std::to_string(x) + "," + std::to_string(y);
                     } else {
@@ -95,12 +102,12 @@ PSR::FindBorders(const std::vector<Instance> &relevants, const std::vector<std::
                     }
 
                     if (this->dist.count(key) == 0) {
-                        this->dist[key] = Distances(x, y, this->m->Distance(relevant, category[i]));
+                        this->dist[key] = Distances(x, y, this->m->Distance(relevant, instance));
                     }
                     distance = this->dist[key].val;
                     if (distance < minDist) {
                         minDist = distance;
-                        nearest = category[i];
+                        nearest = instance;
                     }
                 }
                 temp.push_back(nearest);

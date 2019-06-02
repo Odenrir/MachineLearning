@@ -14,6 +14,8 @@ public:
 
     void Init() override;
 
+    void Clear() override;
+
     std::vector<Instance> DoSelection(const std::vector<Instance> &dataset) override;
 
 protected:

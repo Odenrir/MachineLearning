@@ -40,7 +40,7 @@ std::vector<std::vector<Instance>> PAM::BuildClustering(const std::vector<Instan
         return std::vector<std::vector<Instance>>();
     }
     this->distr = std::uniform_int_distribution<>(0, dataset.size() - 1);
-    std::vector<Instance> oldMeans(this->k);
+    std::vector<Instance> oldMedoids(this->k);
     std::vector<Instance> auxCluster;
     std::vector<int> indices(this->k, -1);
     std::vector<std::list<Instance>> clusters(this->k);
@@ -70,17 +70,19 @@ std::vector<std::vector<Instance>> PAM::BuildClustering(const std::vector<Instan
             }
             clusters[minPos].push_back(instance);
         }
-        oldMeans.swap(this->medoids);
+        oldMedoids.swap(this->medoids);
         std::vector<Instance>().swap(this->medoids);
         this->medoids = std::vector<Instance>(this->k);
 
         for (int i = 0; i < this->k; i++) {
             std::vector<Instance>().swap(auxCluster);
             auxCluster = std::vector<Instance>(clusters[i].begin(), clusters[i].end());
-            this->medoids[i] = this->ComputeMedoid(auxCluster);
+            if (!auxCluster.empty()) {
+                this->medoids[i] = this->ComputeMedoid(auxCluster);
+            }
         }
 
-    } while (!Utils::CompareInstances(this->medoids, oldMeans));
+    } while (!Utils::CompareInstances(this->medoids, oldMedoids));
     this->stop = std::chrono::high_resolution_clock::now();
     std::vector<std::vector<Instance>> result(this->k);
     for (int i = 0; i < this->k; i++) {
@@ -99,6 +101,9 @@ Instance PAM::ComputeMedoid(const std::vector<Instance> &cluster) {
     int x, y;
     std::string key;
     Instance representative;
+    for (const auto &c : cluster) {
+        distSum[c.GetID()] = 0;
+    }
     for (int i = 0; i < cluster.size() - 1; i++) {
         x = cluster[i].GetID();
         for (int j = i + 1; j < cluster.size(); j++) {
@@ -113,16 +118,8 @@ Instance PAM::ComputeMedoid(const std::vector<Instance> &cluster) {
                 this->dist[key] = Distances(x, y, this->m->Distance(cluster[i], cluster[j]));
             }
             distance = this->dist[key].val;
-            if (distSum.count(x) == 0) {
-                distSum[x] = distance;
-            } else {
-                distSum[x] += distance;
-            }
-            if (distSum.count(y) == 0) {
-                distSum[y] = distance;
-            } else {
-                distSum[y] += distance;
-            }
+            distSum[x] += distance;
+            distSum[y] += distance;
         }
     }
 

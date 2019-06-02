@@ -141,15 +141,15 @@ bool Instance::IsMultilabel() const {
 }
 
 bool Instance::IsNumeric() const {
-    return (this->cCategoricFeatures == 0 && this->cNumericFeatures > 0);
+    return this->numerical;
 }
 
 bool Instance::IsNominal() const {
-    return (this->cNumericFeatures == 0 && this->cCategoricFeatures > 0);
+    return this->categorical;
 }
 
 bool Instance::IsMixed() const {
-    return (this->cNumericFeatures > 0 && this->cCategoricFeatures > 0);
+    return this->mixed;
 }
 
 std::list<int> &Instance::GetClasses() {

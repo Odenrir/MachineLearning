@@ -10,6 +10,10 @@ void PSC::Init() {
 
 }
 
+void PSC::Clear() {
+    this->dist.clear();
+}
+
 std::vector<Instance> PSC::DoSelection(const std::vector<Instance> &dataset) {
     std::vector<Instance> selected;
     std::vector<Instance> clusterRepresentatives;
@@ -32,6 +36,8 @@ std::vector<Instance> PSC::DoSelection(const std::vector<Instance> &dataset) {
             clusters = kmeans.BuildClustering(dataset);
             clusterRepresentatives = kmeans.GetCentroids();
         } else {
+            std::cout
+                    << "..................................................................................................\n";
             PAM pam(this->c, *this->m);
             clusters = pam.BuildClustering(dataset);
             clusterRepresentatives = pam.GetMedoids();
@@ -141,3 +147,4 @@ PSC::FindBorders(const std::vector<Instance> &data) {
     border = std::vector<Instance>(select.begin(), select.end());
     return border;
 }
+

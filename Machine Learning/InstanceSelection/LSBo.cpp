@@ -95,7 +95,6 @@ std::vector<Instance> LSBo::DoSelection(const std::vector<Instance> &dataset) {
         localset.second.LS.clear();
     }
     LS.clear();
-    std::cout << std::to_string(this->GetRuntime()) << "\n";
     return selected;
 }
 

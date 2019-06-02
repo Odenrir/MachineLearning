@@ -1,5 +1,5 @@
-#ifndef MACHINELEARNING_ISR_H
-#define MACHINELEARNING_ISR_H
+#ifndef MACHINELEARNING_IBR_H
+#define MACHINELEARNING_IBR_H
 
 #include "Metrics/Metric.h"
 #include "InstanceSelection.h"
@@ -7,9 +7,9 @@
 #include "Misc/Utils.h"
 #include "Misc/Types.h"
 
-class ISR : public InstanceSelection {
+class IBR : public InstanceSelection {
 public:
-    ISR(int k, float hiR, float meR, float loR, Metric &m);
+    IBR(int k, float hiR, float meR, float loR, Metric &m);
 
     void Init() override;
 
@@ -35,4 +35,4 @@ protected:
 };
 
 
-#endif //MACHINELEARNING_ISR_H
+#endif //MACHINELEARNING_IBR_H

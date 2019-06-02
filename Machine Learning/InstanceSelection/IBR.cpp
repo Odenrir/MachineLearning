@@ -1,6 +1,6 @@
-#include "ISR.h"
+#include "IBR.h"
 
-ISR::ISR(int k, float hiR, float meR, float loR, Metric &m) {
+IBR::IBR(int k, float hiR, float meR, float loR, Metric &m) {
     this->k = k;
     this->hiR = hiR;
     this->meR = meR;
@@ -8,15 +8,15 @@ ISR::ISR(int k, float hiR, float meR, float loR, Metric &m) {
     this->m = &m;
 }
 
-void ISR::Init() {
+void IBR::Init() {
 
 }
 
-void ISR::Clear() {
+void IBR::Clear() {
     this->dist.clear();
 }
 
-std::vector<Instance> ISR::DoSelection(const std::vector<Instance> &dataset) {
+std::vector<Instance> IBR::DoSelection(const std::vector<Instance> &dataset) {
     std::vector<std::vector<Instance>> categories;
     std::vector<std::vector<int>> rankedIds;
     std::vector<Relevance> ranks;
@@ -59,7 +59,7 @@ std::vector<Instance> ISR::DoSelection(const std::vector<Instance> &dataset) {
 }
 
 std::vector<Relevance>
-ISR::ComputeRanks(const std::vector<Instance> &category, const std::vector<std::vector<Instance>> &categories) {
+IBR::ComputeRanks(const std::vector<Instance> &category, const std::vector<std::vector<Instance>> &categories) {
     std::vector<Relevance> ranks(category.size());
     for (int i = 0; i < category.size(); i++) {
         ranks[i] = Relevance(category[i].GetID(), this->ComputeRank(category[i], categories));
@@ -67,7 +67,7 @@ ISR::ComputeRanks(const std::vector<Instance> &category, const std::vector<std::
     return ranks;
 }
 
-double ISR::ComputeRank(const Instance &reference, const std::vector<std::vector<Instance>> &categories) {
+double IBR::ComputeRank(const Instance &reference, const std::vector<std::vector<Instance>> &categories) {
     double result = 0;
     std::list<Distances> auxDist;
     std::vector<Distances> vecDist;
@@ -92,7 +92,7 @@ double ISR::ComputeRank(const Instance &reference, const std::vector<std::vector
     return result;
 }
 
-std::vector<int> ISR::SelectInstances(std::vector<Relevance> &ranks, const std::vector<Instance> &data) {
+std::vector<int> IBR::SelectInstances(std::vector<Relevance> &ranks, const std::vector<Instance> &data) {
     std::sort(ranks.rbegin(), ranks.rend());
     int r1 = (this->hiR / 100) * data.size();
     int r2 = (this->meR / 100) * data.size();
@@ -115,7 +115,7 @@ std::vector<int> ISR::SelectInstances(std::vector<Relevance> &ranks, const std::
     return selected;
 }
 
-Distances ISR::Similarity(const Instance &x, const Instance &y) {
+Distances IBR::Similarity(const Instance &x, const Instance &y) {
     int id1, id2;
     std::string key;
     id1 = x.GetID();
@@ -129,5 +129,5 @@ Distances ISR::Similarity(const Instance &x, const Instance &y) {
     if (this->dist.count(key) == 0) {
         this->dist[key] = Distances(id1, id2, this->m->Distance(x, y));
     }
-    return Distances(id1, id2, 1 - this->dist[key].val);
+    return {id1, id2, 1 - this->dist[key].val};
 }

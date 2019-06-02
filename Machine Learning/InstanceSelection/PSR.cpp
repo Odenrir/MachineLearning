@@ -9,6 +9,10 @@ void PSR::Init() {
 
 }
 
+void PSR::Clear() {
+    this->dist.clear();
+}
+
 std::vector<Instance> PSR::DoSelection(const std::vector<Instance> &dataset) {
     std::vector<std::vector<Instance>> classes = Utils::SplitDataSetIntoClasses(dataset);
     std::vector<std::vector<Instance>> relevants = std::vector<std::vector<Instance>>(classes.size());

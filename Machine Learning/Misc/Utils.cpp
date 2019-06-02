@@ -19,6 +19,8 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
     std::string attribute("@ATTRIBUTE");
     std::string data("@DATA");
     std::string numeric("NUMERIC");
+    std::string real("REAL");
+    std::string integer("INTEGER");
     std::string missing("?");
     std::string empty;
     int numericValues = 0, nominalValues = 0, id = 0;
@@ -29,7 +31,9 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
                 std::replace(line.begin(), line.end(), '\t', ' ');
                 boost::split(splitString, line, boost::is_any_of(" "));
 
-                if (CaseInsensitiveStringCompare(splitString[2], numeric)) {
+                if (CaseInsensitiveStringCompare(splitString[2], numeric) ||
+                    CaseInsensitiveStringCompare(splitString[2], real) ||
+                    CaseInsensitiveStringCompare(splitString[2], integer)) {
                     descriptorList.push_back(0);
                 } else {
                     std::map<std::string, int> mapNominal;
@@ -94,7 +98,8 @@ std::vector<Instance> Utils::ReadARFF(const std::string &training) {
                 if (vectorMapNominal[k].count(boost::algorithm::trim_copy(splitString[descriptorVector.size() - 1])) >
                     0) {
                     inst.SetID(id);
-                    inst.SetClass(vectorMapNominal[k][splitString[descriptorVector.size() - 1]]);
+                    inst.SetClass(
+                            vectorMapNominal[k][boost::algorithm::trim_copy(splitString[descriptorVector.size() - 1])]);
                     inst.SetDescriptor(descriptorVector);
                     id++;
                     result.push_back(inst);

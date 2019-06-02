@@ -8,7 +8,7 @@
 #include "InstanceSelection/LSSm.h"
 #include "InstanceSelection/LSCo.h"
 #include "InstanceSelection/LSBo.h"
-#include "InstanceSelection/ISR.h"
+#include "InstanceSelection/IBR.h"
 #include "InstanceSelection/ENN.h"
 #include "Clustering/kMeans.h"
 #include "Metrics/Euclidean.h"
@@ -42,10 +42,16 @@ int main(int argc, char *argv[]) {
         std::cout << "Normalizing metric...\n";
         heom.Normalize(train);
         kNN algorithm(3, heom);
-        ISRB sel(1, heom);
+        //ISRB sel(30, heom);
+        //PSR sel(30, heom);
+        //PSC sel(6, heom);
+        //IBR sel(3, 30, 3, 3, heom);
+        //LSBo sel(heom);
+        //LSCo sel(heom);
+        ISBM sel(30, heom);
         std::cout << "Starting validation...\n";
         auto xval = new kFoldCrossValidation(10, train, algorithm);
-        std::vector<float> avg = xval->ValidateIS(sel, f + " - ISRB.txt");
+        std::vector<float> avg = xval->ValidateIS(sel, f + " - ISBM-30.txt");
         std::vector<Instance>().swap(train);
     }
     //std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/segment-challenge.arff");
@@ -62,7 +68,7 @@ int main(int argc, char *argv[]) {
     std::cout << "Starting validation...\n";*/
     //LSSm fil(heom);
     //LSBo sel(heom);
-    //ISR sel(3, 30, 3, 3, heom);
+    //IBR sel(3, 30, 3, 3, heom);
     //ENN sel(heom, 3);
     //ISRB sel(1, heom);
     //ISBM sel(1, heom);

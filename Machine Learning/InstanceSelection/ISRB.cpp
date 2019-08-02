@@ -63,6 +63,10 @@ std::vector<Instance> ISRB::DoSelection(const std::vector<Instance> &dataset) {
     return selected;
 }
 
+std::vector<Instance> ISRB::GetIntersectionRepresentatives() {
+    return this->iRrepresentatives;
+}
+
 std::vector<Relevance> ISRB::ComputeRelevances(const std::vector<Instance> &data) {
     std::vector<Relevance> relevances(data.size());
     double distance;
@@ -107,7 +111,7 @@ std::vector<Instance>
 ISRB::FindBorders(const std::vector<Instance> &topRelevants, const std::vector<std::vector<Instance>> &categories) {
     std::vector<Instance> borders;
     std::vector<Instance> references(2);
-    std::list<Instance> temp;
+    std::list<Instance> temp, iRep;
     Instance intersection, categoryRelevant;
     int x, y;
     std::string key;
@@ -118,6 +122,7 @@ ISRB::FindBorders(const std::vector<Instance> &topRelevants, const std::vector<s
                 categoryRelevant = this->FindRelevant(topRelevants, category[0].GetClass());
                 references[1] = categoryRelevant;
                 intersection = this->ComputeCentroid(references);
+                iRep.push_back(intersection);
                 x = categoryRelevant.GetID();
                 for (const auto &instance: category) {
                     y = instance.GetID();
@@ -134,6 +139,7 @@ ISRB::FindBorders(const std::vector<Instance> &topRelevants, const std::vector<s
         }
     }
 
+    this->iRrepresentatives = std::vector<Instance>(iRep.begin(), iRep.end());
     borders = std::vector<Instance>(temp.begin(), temp.end());
     return borders;
 }

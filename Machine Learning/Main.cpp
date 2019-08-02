@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
 #if defined(_WIN32) && defined(_DEBUG)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-    std::string dir = "/home/aldair/Documentos/numeric/";
+    /*std::string dir = "/home/aldair/Documentos/numeric/";
     std::string ext = ".arff";
     std::vector<std::string> files = {"diabetes", "iris", "liver", "sonar", "thyroid", "wine", "letter", "spam",
                                       "segment", "pendigits", "kdd_synthetic_control"};
@@ -53,7 +53,49 @@ int main(int argc, char *argv[]) {
         auto xval = new kFoldCrossValidation(10, train, algorithm);
         std::vector<float> avg = xval->ValidateIS(sel, f + " - ISBM-30.txt");
         std::vector<Instance>().swap(train);
+    }*/
+    std::string file = "/home/aldair/Documentos/sint/sint10000d110c3.csv";
+    std::vector<Instance> train = Utils::ReadCSV(file);
+    //std::string file = "/home/aldair/Documentos/numeric/iris.arff";
+    //std::vector<Instance> train = Utils::ReadARFF(file);
+    Plot::PlotScatter2D(train);
+    HEOM heom;
+    heom.Normalize(train);
+    /*PAM clus(3, 100, 100,heom);
+    auto c = clus.BuildClustering(train);
+    Plot::PlotScatter2D(c);
+    std::vector<Instance> tr = std::vector<Instance>(train.size());
+    int count = 0;
+    for (int j = 0; j < c.size(); j++) {
+        for (int i = 0; i < c[j].size(); i++) {
+            tr[count] = c[j][i];
+            tr[count].SetClass(j);
+            tr[count].SetID(count);
+            auto aux = tr[count].GetDescriptor();
+            aux[aux.size() - 1] = c.size();
+            tr[count].SetDescriptor(aux);
+            count++;
+        }
+    }*/
+    ISBM sel(1, heom);
+    auto select = sel.DoSelection(train);
+    auto dat = sel.GetBorderRepresentatives();
+    std::vector<Instance> tmp = std::vector<Instance>(select.size() + dat.size());
+    int count = 0;
+    auto aux = select[count].GetDescriptor();
+    aux[aux.size() - 1] = aux[aux.size() - 1] + 1;
+    for (int i = 0; i < select.size(); i++) {
+        tmp[count] = select[i];
+        tmp[count].SetDescriptor(aux);
+        count++;
     }
+    for (int i = 0; i < dat.size(); i++) {
+        tmp[count] = dat[i];
+        tmp[count].SetDescriptor(aux);
+        tmp[count].SetClass(aux[aux.size() - 1] - 1);
+        count++;
+    }
+    Plot::ScalePlotScatter2D(train, tmp);
     //std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/segment-challenge.arff");
     //std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/numeric/kdd_synthetic_control.arff");
     //std::vector<Instance> train = Utils::ReadCSV("/home/aldair/Documentos/sint.csv");

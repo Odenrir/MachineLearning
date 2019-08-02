@@ -62,6 +62,10 @@ std::vector<Instance> ISBM::DoSelection(const std::vector<Instance> &dataset) {
     return selected;
 }
 
+std::vector<Instance> ISBM::GetIntersectionRepresentatives() {
+    return this->bRrepresentatives;
+}
+
 std::vector<Relevance> ISBM::ComputeRelevances(const std::vector<Instance> &data) {
     std::vector<Relevance> relevances(data.size());
     double distance;
@@ -105,7 +109,7 @@ ISBM::SelectRelevants(std::vector<Relevance> &relevances, const std::vector<Inst
 std::vector<Instance>
 ISBM::FindBorders(const std::vector<Instance> &topRelevants, const std::vector<std::vector<Instance>> &categories) {
     std::vector<Instance> borders;
-    std::list<Instance> temp;
+    std::list<Instance> temp, bRep;
     Instance intersection, categoryRelevant;
     int x, y, z, indexCat, indexRel;
     std::string key1, key2;
@@ -117,7 +121,7 @@ ISBM::FindBorders(const std::vector<Instance> &topRelevants, const std::vector<s
                 indexRel = Utils::SameClass(category[0].GetClass(), topRelevants);
                 z = intersection.GetID();
                 x = topRelevants[indexRel].GetID();
-                //temp.push_back(intersection);
+                bRep.push_back(intersection);
                 for (const auto &instance: categories[indexCat]) {
                     y = instance.GetID();
                     if (x < y) {
@@ -138,6 +142,7 @@ ISBM::FindBorders(const std::vector<Instance> &topRelevants, const std::vector<s
         }
     }
 
+    this->bRrepresentatives = std::vector<Instance>(bRep.begin(), bRep.end());
     borders = std::vector<Instance>(temp.begin(), temp.end());
     return borders;
 }

@@ -16,6 +16,8 @@ public:
 
     std::vector<Instance> DoSelection(const std::vector<Instance> &dataset) override;
 
+    std::vector<Instance> GetIntersectionRepresentatives();
+
 protected:
 
     std::vector<Relevance> ComputeRelevances(const std::vector<Instance> &data);
@@ -34,6 +36,7 @@ protected:
     Metric *m;
     int featuresSize;
     std::map<std::string, Distances> dist;
+    std::vector<Instance> iRrepresentatives;
 };
 
 #endif //MACHINELEARNING_ISRB_H

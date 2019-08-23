@@ -13,7 +13,7 @@ void ISRB::Init() {
 }
 
 void ISRB::Clear() {
-
+    this->dist.clear();
 }
 
 

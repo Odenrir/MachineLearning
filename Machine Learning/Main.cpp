@@ -1,3 +1,4 @@
+#include <InstanceSelection/ISRT.h>
 #include "Misc/Utils.h"
 #include "Misc/Plot.h"
 #include "Classify/kNN.h"
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
 #if defined(_WIN32) && defined(_DEBUG)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-    /*std::string dir = "/home/aldair/Documentos/numeric/";
+    std::string dir = "/home/aldair/Documentos/numeric/";
     std::string ext = ".arff";
     std::vector<std::string> files = {"diabetes", "iris", "liver", "sonar", "thyroid", "wine", "letter", "spam",
                                       "segment", "pendigits", "kdd_synthetic_control"};
@@ -41,26 +42,27 @@ int main(int argc, char *argv[]) {
         HEOM heom;
         std::cout << "Normalizing metric...\n";
         heom.Normalize(train);
-        kNN algorithm(3, heom);
+        kNN algorithm(4, heom);
         //ISRB sel(30, heom);
         //PSR sel(30, heom);
         //PSC sel(6, heom);
         //IBR sel(3, 30, 3, 3, heom);
         //LSBo sel(heom);
         //LSCo sel(heom);
-        ISBM sel(30, heom);
+        ISRT sel(3, heom);
         std::cout << "Starting validation...\n";
         auto xval = new kFoldCrossValidation(10, train, algorithm);
-        std::vector<float> avg = xval->ValidateIS(sel, f + " - ISBM-30.txt");
+        std::vector<float> avg = xval->ValidateIS(sel, f + " - ISRT-4.txt");
         std::vector<Instance>().swap(train);
-    }*/
-    std::string file = "/home/aldair/Documentos/sint/sint10000d110c3.csv";
-    std::vector<Instance> train = Utils::ReadCSV(file);
+    }
+    //std::string file = "/home/aldair/Documentos/sint/sint400.csv";
+    //std::string file = "/home/aldair/Documentos/sint/sint10000d110c3.csv";
+    //std::vector<Instance> train = Utils::ReadCSV(file);
     //std::string file = "/home/aldair/Documentos/numeric/iris.arff";
     //std::vector<Instance> train = Utils::ReadARFF(file);
-    Plot::PlotScatter2D(train);
+    /*Plot::PlotScatter2D(train);
     HEOM heom;
-    heom.Normalize(train);
+    heom.Normalize(train);*/
     /*PAM clus(3, 100, 100,heom);
     auto c = clus.BuildClustering(train);
     Plot::PlotScatter2D(c);
@@ -77,7 +79,7 @@ int main(int argc, char *argv[]) {
             count++;
         }
     }*/
-    ISBM sel(1, heom);
+    /*ISBM sel(1, heom);
     auto select = sel.DoSelection(train);
     auto dat = sel.GetBorderRepresentatives();
     std::vector<Instance> tmp = std::vector<Instance>(select.size() + dat.size());
@@ -95,7 +97,10 @@ int main(int argc, char *argv[]) {
         tmp[count].SetClass(aux[aux.size() - 1] - 1);
         count++;
     }
-    Plot::ScalePlotScatter2D(train, tmp);
+    Plot::ScalePlotScatter2D(train, tmp);*/
+    /*ISRT sel(1, heom);
+    auto select = sel.DoSelection(train);
+    Plot::ScalePlotScatter2D(train, select);*/
     //std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/segment-challenge.arff");
     //std::vector<Instance> train = Utils::ReadARFF("/home/aldair/Documentos/numeric/kdd_synthetic_control.arff");
     //std::vector<Instance> train = Utils::ReadCSV("/home/aldair/Documentos/sint.csv");

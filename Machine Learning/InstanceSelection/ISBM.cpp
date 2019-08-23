@@ -12,7 +12,7 @@ void ISBM::Init() {
 }
 
 void ISBM::Clear() {
-
+    this->dist.clear();
 }
 
 

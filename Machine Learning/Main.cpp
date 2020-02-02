@@ -42,17 +42,17 @@ int main(int argc, char *argv[]) {
         HEOM heom;
         std::cout << "Normalizing metric...\n";
         heom.Normalize(train);
-        kNN algorithm(4, heom);
+        kNN algorithm(3, heom);
         //ISRB sel(30, heom);
         //PSR sel(30, heom);
         //PSC sel(6, heom);
         //IBR sel(3, 30, 3, 3, heom);
         //LSBo sel(heom);
         //LSCo sel(heom);
-        ISRT sel(3, heom);
+        ISRT sel(0.5, heom);
         std::cout << "Starting validation...\n";
         auto xval = new kFoldCrossValidation(10, train, algorithm);
-        std::vector<float> avg = xval->ValidateIS(sel, f + " - ISRT-4.txt");
+        std::vector<float> avg = xval->ValidateIS(sel, f + " - ISRT-0-5.txt");
         std::vector<Instance>().swap(train);
     }
     //std::string file = "/home/aldair/Documentos/sint/sint400.csv";

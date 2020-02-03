@@ -18,7 +18,7 @@ double Euclidean::Distance(const Instance &inst1, const Instance &inst2) {
         }
         result += aux;
     }
-    sqrt(result) / sqrt(inst1.CountNumericFeatures());
+    result = sqrt(result) / sqrt(inst1.CountNumericFeatures());
     return result;
 }
 

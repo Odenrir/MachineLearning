@@ -4,6 +4,11 @@ project(MachineLearning)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(Boost REQUIRED)
+MESSAGE("Boost information:")
+MESSAGE("  Boost_INCLUDE_DIRS: ${Boost_INCLUDE_DIRS}")
+MESSAGE("  Boost_LIBRARIES: ${Boost_LIBRARIES}")
+MESSAGE("  Boost_LIBRARY_DIRS: ${Boost_LIBRARY_DIRS}")
+
 find_package(PythonLibs REQUIRED)
 
 include_directories(${PYTHON_INCLUDE_DIRS})

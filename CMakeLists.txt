@@ -5,25 +5,20 @@ set(CMAKE_CXX_STANDARD 14)
 
 set(Boost_USE_MULTITHREADED ON)
 if (APPLE)
-    #set(Boost_USE_STATIC_LIBS       ON)
+    #For boost
     set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/usr/local/Cellar/boost/1.72.0")
     set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/usr/local/Cellar/boost/1.72.0/lib")
-    set(CMAKE_C_FLAGS ${CMAKE_C_FLAGS} "-I /opt/anaconda3/lib/python3.7/site-packages/numpy/core/include")
+
+    #For PythonLibs
     set(PYTHON_INCLUDE_DIR /opt/anaconda3/include/python3.7m)
     set(PYTHON_LIBRARY /opt/anaconda3/lib/libpython3.7m.dylib)
-    #set(PYTHON_INCLUDE_DIR /usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/Headers)
-    #set(PYTHON_LIBRARY /usr/local/Cellar/python/3.7.6_1/Frameworks/Python.framework/Versions/3.7/lib/libpython3.7m.dylib)
-    #set(Boost_ROOT /usr/local/Cellar/boost/1.72.0)
-    #set(Boost_INCLUDE_DIR /usr/local/Cellar/boost/1.72.0/include)
-    #set(Boost_INCLUDE_DIRS /usr/local/Cellar/boost/1.72.0/include)
-    #set(Boost_LIBRARY_DIRS /usr/local/Cellar/boost/1.72.0/lib)
-    #set(Boost_LIBRARIES /usr/local/Cellar/boost/1.72.0/lib)
-    #set(Boost_LIBRARY_DIRS /usr/local/lib)
-    #set(Boost_LIBRARIES /usr/local/lib)
-    find_package(Boost REQUIRED)
-else ()
-    find_package(Boost REQUIRED)
+    set(NUMPY_INCLUDE_DIR /opt/anaconda3/lib/python3.7/site-packages/numpy/core/include)
+
+    include_directories(${NUMPY_INCLUDE_DIR})
 endif ()
+
+find_package(Boost REQUIRED)
+find_package(PythonLibs REQUIRED)
 
 if (Boost_FOUND)
     message("Boost config:")
@@ -37,7 +32,6 @@ if (Boost_FOUND)
     add_definitions("-DHAS_BOOST")
 endif ()
 
-find_package(PythonLibs REQUIRED)
 if (PYTHONLIBS_FOUND)
     message("PythonLibs config:")
     message("   PYTHONLIBS INCLUDE DIRS = ${PYTHON_INCLUDE_DIRS}")

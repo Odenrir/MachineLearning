@@ -96,7 +96,7 @@ std::vector<Instance> ISRT::FindBorders(const Instance &relevant, const std::vec
     std::list<Instance> temp;
     int x = relevant.GetID(), y;
     std::string key;
-    double mean = 0.0, meanSquares = 0.0, stdDev;
+    double mean = 0.0, meanSquares = 0.0, stdDev, variance, threshold;
     for (int i = 0; i < category.size(); i++) {
         y = category[i].GetID();
         if (x != y) {
@@ -112,6 +112,7 @@ std::vector<Instance> ISRT::FindBorders(const Instance &relevant, const std::vec
     mean = mean / (category.size() - 1);
     meanSquares = meanSquares / (category.size() - 1);
     stdDev = meanSquares - std::pow(mean, 2);
+    variance = std::sqrt(stdDev);
 
     for (int i = 0; i < category.size(); i++) {
         y = category[i].GetID();
@@ -121,8 +122,9 @@ std::vector<Instance> ISRT::FindBorders(const Instance &relevant, const std::vec
             } else {
                 key = std::to_string(y) + "," + std::to_string(x);
             }
-            if (this->dist[key].val > (mean - (std::sqrt(stdDev) / this->t)) &&
-                this->dist[key].val < ((mean + std::sqrt(stdDev) / this->t))) {
+            threshold = variance * this->t;
+            if (this->dist[key].val > (mean - threshold) &&
+                this->dist[key].val < (mean + threshold)) {
                 temp.push_back(category[i]);
             }
         }

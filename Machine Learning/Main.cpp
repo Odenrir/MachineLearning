@@ -49,7 +49,7 @@ int main(int argc, char *argv[]) {
         //IBR sel(3, 30, 3, 3, heom);
         //LSBo sel(heom);
         //LSCo sel(heom);
-        ISRT sel(3, heom);
+        ISRT sel(0.33, heom);
         std::cout << "Starting validation...\n";
         auto xval = new kFoldCrossValidation(10, train, algorithm);
         std::vector<float> avg = xval->ValidateIS(sel, f + " - ISRT-4.txt");

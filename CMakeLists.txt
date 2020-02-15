@@ -15,6 +15,14 @@ if (APPLE)
     set(NUMPY_INCLUDE_DIR /opt/anaconda3/lib/python3.7/site-packages/numpy/core/include)
 
     include_directories(${NUMPY_INCLUDE_DIR})
+elseif (CYGWIN)
+    #For PythonLibs
+    set(PYTHON_INCLUDE_DIR /usr/include/python3.7m)
+    set(PYTHON_LIBRARY /usr/lib/libpython3.7m.dll.a)
+    set(NUMPY_INCLUDE_DIR /usr/lib/python3.7/site-packages/numpy/core/include)
+
+    include_directories(${NUMPY_INCLUDE_DIR})
+
 endif ()
 
 find_package(Boost REQUIRED)

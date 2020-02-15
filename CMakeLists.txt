@@ -3,11 +3,43 @@ project(MachineLearning)
 
 set(CMAKE_CXX_STANDARD 14)
 
+set(Boost_USE_MULTITHREADED ON)
+if (APPLE)
+    #For boost
+    set(CMAKE_INCLUDE_PATH ${CMAKE_INCLUDE_PATH} "/usr/local/Cellar/boost/1.72.0")
+    set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} "/usr/local/Cellar/boost/1.72.0/lib")
+
+    #For PythonLibs
+    set(PYTHON_INCLUDE_DIR /opt/anaconda3/include/python3.7m)
+    set(PYTHON_LIBRARY /opt/anaconda3/lib/libpython3.7m.dylib)
+    set(NUMPY_INCLUDE_DIR /opt/anaconda3/lib/python3.7/site-packages/numpy/core/include)
+
+    include_directories(${NUMPY_INCLUDE_DIR})
+endif ()
+
 find_package(Boost REQUIRED)
 find_package(PythonLibs REQUIRED)
 
-include_directories(${PYTHON_INCLUDE_DIRS})
-include_directories(${BOOST_INCLUDE_DIRS})
+if (Boost_FOUND)
+    message("Boost config:")
+    message("   BOOST INCLUDE DIR = ${Boost_INCLUDE_DIR}")
+    message("   BOOST INCLUDE DIRS = ${Boost_INCLUDE_DIRS}")
+    message("   BOOST LIB DIR = ${Boost_LIBRARY_DIRS}")
+    message("   BOOST LIBRARIES = ${Boost_LIBRARIES}")
+    message("   BOOST FOUND = ${Boost_FOUND}")
+    message("   BOOST VERSION = ${Boost_VERSION}")
+    include_directories(${Boost_INCLUDE_DIR})
+    add_definitions("-DHAS_BOOST")
+endif ()
+
+if (PYTHONLIBS_FOUND)
+    message("PythonLibs config:")
+    message("   PYTHONLIBS INCLUDE DIRS = ${PYTHON_INCLUDE_DIRS}")
+    message("   PYTHONLIBS LIBRARIES = ${PYTHON_LIBRARIES}")
+    message("   PYTHONLIBS FOUND = ${PYTHONLIBS_FOUND}")
+    message("   PYTHONLIBS VERSION = ${PYTHONLIBS_VERSION_STRING}")
+    include_directories(${PYTHON_INCLUDE_DIRS})
+endif ()
 
 include_directories("Machine Learning")
 

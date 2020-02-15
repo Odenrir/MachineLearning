@@ -29,7 +29,7 @@ double HEOM::Distance(const Instance &inst1, const Instance &inst2) {
         }
         result += aux;
     }
-    sqrt(result) / sqrt(inst1.CountFeatures());
+    result = sqrt(result) / sqrt(inst1.CountFeatures());
     return result;
 }
 

@@ -1,3 +1,8 @@
+/* Copyright (C) Argenis Aldair Aroche Villarruel, Inc - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * Written by Argenis Aldair Aroche Villarruel <argenis_aroche@hotmail.com>, 2018
+ */
 #include <InstanceSelection/ISRT.h>
 #include "Misc/Utils.h"
 #include "Misc/Plot.h"
